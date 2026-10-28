@@ -96,11 +96,11 @@ Implemented in [`Employee.java`](file:///c:/CNMS.HONS/employee-service/src/main/
 ### A. GitHub Repository Link
 The project is organized in the root workspace Git repository:
 - **Local Project Path:** `C:\CNMS.HONS\employee-service`
-- **GitHub Repository URL:** `https://github.com/rohit/cloud-native-microservices-hons`
+- **GitHub Repository URL:** `https://github.com/polipireddirohith/CNMSE-HONs.git`
 - **Push Instructions to your remote GitHub repository:**
   ```bash
   cd C:\CNMS.HONS
-  git remote add origin https://github.com/<your-username>/cloud-native-microservices-hons.git
+  git remote add origin https://github.com/polipireddirohith/CNMSE-HONs.git
   git branch -M main
   git push -u origin main
   ```

@@ -98,10 +98,11 @@ Interactive Swagger documentation is powered by `swagger-ui-express` and annotat
 The project is initialized as a Git repository in this workspace with full commit history:
 - **Local Repository Path:** `C:\CNMS.HONS`
 - **Source Code Directory:** [`todo-api`](file:///c:/CNMS.HONS/todo-api)
+- **GitHub Repository URL:** `https://github.com/polipireddirohith/CNMSE-HONs.git`
 - **To Push to GitHub / GitLab:**
   ```bash
   cd C:\CNMS.HONS
-  git remote add origin https://github.com/<your-username>/cnms-hands-on.git
+  git remote add origin https://github.com/polipireddirohith/CNMSE-HONs.git
   git branch -M main
   git push -u origin main
   ```

@@ -120,11 +120,11 @@ Implemented in [`middleware/errorHandler.js`](file:///c:/CNMS.HONS/product-catal
 The microservice is committed to the local Git repository in this workspace:
 - **Local Repository Path:** `C:\CNMS.HONS`
 - **Microservice Directory:** [`product-catalog-service`](file:///c:/CNMS.HONS/product-catalog-service)
-- **GitHub Repository URL:** `https://github.com/rohit/cloud-native-microservices-hons`
+- **GitHub Repository URL:** `https://github.com/polipireddirohith/CNMSE-HONs.git`
 - **Push Instructions to your GitHub repository:**
   ```bash
   cd C:\CNMS.HONS
-  git remote add origin https://github.com/<your-username>/cloud-native-microservices-hons.git
+  git remote add origin https://github.com/polipireddirohith/CNMSE-HONs.git
   git branch -M main
   git push -u origin main
   ```
