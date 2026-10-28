@@ -1,0 +1,24 @@
+{
+  "name": "todo-rest-api",
+  "version": "1.0.0",
+  "description": "Simple To-Do List REST API with Express and Swagger OpenAPI documentation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "todo",
+    "rest",
+    "express",
+    "swagger",
+    "openapi"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

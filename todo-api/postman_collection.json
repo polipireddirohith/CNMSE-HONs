@@ -1,0 +1,198 @@
+{
+  "info": {
+    "_postman_id": "c89bfa78-75d1-432a-bc9e-8c3e8cb1e3a1",
+    "name": "To-Do REST API - HON2",
+    "description": "Postman Collection for testing all CRUD endpoints of the To-Do REST API (GET, POST, PUT, DELETE) along with Swagger API documentation endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET All Tasks",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/tasks",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "tasks"
+          ]
+        },
+        "description": "Retrieves the full list of tasks."
+      },
+      "response": []
+    },
+    {
+      "name": "2. GET Tasks (Filtered by completed=true)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/tasks?completed=true",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "tasks"
+          ],
+          "query": [
+            {
+              "key": "completed",
+              "value": "true"
+            }
+          ]
+        },
+        "description": "Retrieves only completed tasks."
+      },
+      "response": []
+    },
+    {
+      "name": "3. GET Task by ID (ID: 1)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/tasks/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "tasks",
+            "1"
+          ]
+        },
+        "description": "Retrieves a single task with ID 1."
+      },
+      "response": []
+    },
+    {
+      "name": "4. POST Create New Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Deploy to Kubernetes cluster\",\n  \"description\": \"Write deployment and service YAML manifests\",\n  \"completed\": false\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tasks",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "tasks"
+          ]
+        },
+        "description": "Creates a new to-do task."
+      },
+      "response": []
+    },
+    {
+      "name": "5. PUT Update Task (ID: 2)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Implement REST API for To-Do (Completed)\",\n  \"description\": \"All CRUD endpoints built and tested with Postman\",\n  \"completed\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tasks/2",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "tasks",
+            "2"
+          ]
+        },
+        "description": "Updates task ID 2 with new title, description, and sets completed=true."
+      },
+      "response": []
+    },
+    {
+      "name": "6. DELETE Task (ID: 3)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/tasks/3",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "tasks",
+            "3"
+          ]
+        },
+        "description": "Deletes task with ID 3."
+      },
+      "response": []
+    },
+    {
+      "name": "7. GET OpenAPI Spec JSON",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api-docs.json",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api-docs.json"
+          ]
+        },
+        "description": "Fetches the raw OpenAPI 3.0 specification."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
