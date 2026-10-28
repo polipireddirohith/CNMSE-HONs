@@ -1,0 +1,147 @@
+{
+  "info": {
+    "_postman_id": "e2a4b870-80a2-4a0b-932d-3cb837119e91",
+    "name": "Product Catalog Microservice - HON4",
+    "description": "Postman Collection for testing all CRUD endpoints, query filters, and error handling middleware for the Product Catalog Microservice.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET All Products",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["products"]
+        },
+        "description": "Fetch all products in the catalog."
+      },
+      "response": []
+    },
+    {
+      "name": "2. GET Products by Category (Electronics)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/products?category=Electronics",
+          "host": ["{{baseUrl}}"],
+          "path": ["products"],
+          "query": [
+            { "key": "category", "value": "Electronics" }
+          ]
+        },
+        "description": "Filter products by category."
+      },
+      "response": []
+    },
+    {
+      "name": "3. POST Create Product (Valid)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Mechanical Gaming Keyboard\",\n  \"price\": 129.99,\n  \"category\": \"Electronics\",\n  \"stock\": 50,\n  \"description\": \"RGB hot-swappable mechanical keyboard with tactile switches.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["products"]
+        },
+        "description": "Create a new product with all required fields."
+      },
+      "response": []
+    },
+    {
+      "name": "4. POST Create Product (Validation Failure - Blank Name, Negative Price, Invalid Category)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"price\": -25.00,\n  \"category\": \"Vehicles\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["products"]
+        },
+        "description": "Tests error handling middleware for Mongoose validation errors."
+      },
+      "response": []
+    },
+    {
+      "name": "5. GET Product by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/products/67200a1b2c3d4e5f6a7b8c91",
+          "host": ["{{baseUrl}}"],
+          "path": ["products", "67200a1b2c3d4e5f6a7b8c91"]
+        },
+        "description": "Retrieve product details by ObjectId."
+      },
+      "response": []
+    },
+    {
+      "name": "6. PUT Update Product Price and Stock",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"price\": 89.99,\n  \"stock\": 65\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/products/67200a1b2c3d4e5f6a7b8c91",
+          "host": ["{{baseUrl}}"],
+          "path": ["products", "67200a1b2c3d4e5f6a7b8c91"]
+        },
+        "description": "Update product price and inventory count."
+      },
+      "response": []
+    },
+    {
+      "name": "7. DELETE Product by ID",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/products/67200a1b2c3d4e5f6a7b8c93",
+          "host": ["{{baseUrl}}"],
+          "path": ["products", "67200a1b2c3d4e5f6a7b8c93"]
+        },
+        "description": "Delete a product by ID."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ]
+}
