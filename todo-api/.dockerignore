@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+*.png
+test-api.js
+postman_collection.json
+.DS_Store

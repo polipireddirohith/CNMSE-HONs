@@ -12,6 +12,7 @@ Repository containing completed hands-on exercises for Cloud Native Microservice
 | **HON 2** | To-Do List REST API with OpenAPI / Swagger | Node.js, Express, Swagger UI (`swagger-ui-express`, `swagger-jsdoc`) | [HON2.md](./HON2.md) |
 | **HON 3** | Employee Management Microservice | Spring Boot 3, Spring Data JPA, In-Memory H2 DB, Jakarta Validation | [HON3.md](./HON3.md) |
 | **HON 4** | Product Catalog Microservice | Node.js, Express, Mongoose (MongoDB ODM), Centralized Error Handling | [HON4.md](./HON4.md) |
+| **HON 5** | Containerization & Kubernetes Orchestration | Docker, Docker Compose, Kubernetes, Minikube, kubectl | [HON5.md](./HON5.md) |
 
 ---
 
@@ -23,13 +24,26 @@ CNMSE-HONs/
 ├── HON2.md                       # To-Do REST API documentation with Swagger UI details
 ├── HON3.md                       # Spring Boot Employee Management microservice documentation
 ├── HON4.md                       # Product Catalog microservice documentation with Postman proofs
+├── HON5.md                       # Containerization (Docker) & Orchestration (Kubernetes/Minikube)
+├── kubectl-pods-screenshot.png   # Verified terminal screenshot of running pods in Minikube
+├── docker-compose.yml            # Docker Compose orchestration file
 │
-├── todo-api/                     # HON2: Node.js Express REST API
+├── k8s/                          # Kubernetes Manifests (Module 5)
+│   ├── deployment.yaml           # Deployment manifest with 2 replicas, probes, resource limits
+│   ├── service.yaml              # NodePort service manifest exposing port 30080
+│   └── kubectl-pods-screenshot.png # Verification screenshot
+│
+├── todo-api/                     # HON2 & HON5: Node.js Express REST API
+│   ├── Dockerfile                # Production Alpine Dockerfile (non-root, layer cached)
+│   ├── .dockerignore             # Docker ignore configuration
 │   ├── server.js                 # Express server with Swagger JSDoc annotations
 │   ├── package.json              # Dependencies (express, swagger-ui-express, swagger-jsdoc)
 │   ├── postman_collection.json   # Exported Postman collection for all CRUD endpoints
 │   ├── test-api.js               # End-to-end automated test runner
-│   └── swagger-ui-screenshot.png # Live Swagger UI screenshot
+│   ├── swagger-ui-screenshot.png # Live Swagger UI screenshot
+│   └── k8s/                      # Kubernetes manifests directory
+│       ├── deployment.yaml
+│       └── service.yaml
 │
 ├── employee-service/             # HON3: Spring Boot Microservice
 │   ├── pom.xml                   # Maven build file (Spring Web, JPA, H2, Validation)
@@ -81,4 +95,27 @@ cd product-catalog-service
 npm install
 npm start
 # Server runs on port 5000. API: http://localhost:5000/products
+```
+
+### HON5: Containerization & Kubernetes (Docker + Minikube)
+```bash
+# 1. Build and run locally with Docker
+docker build -t todo-api:v1 ./todo-api
+docker run -d -p 3000:3000 --name todo-api-test todo-api:v1
+
+# Or with Docker Compose
+docker compose up -d
+
+# 2. Deploy to Minikube
+minikube start --driver=docker
+minikube image load todo-api:v1
+kubectl apply -f k8s/
+
+# 3. Verify deployment and pods
+kubectl get pods -o wide
+kubectl get deployments
+kubectl get services
+
+# 4. Access the service
+minikube service todo-api-service
 ```

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  todo-api:
+    build:
+      context: ./todo-api
+      dockerfile: Dockerfile
+    image: todo-api:v1
+    container_name: todo-api-service
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
