@@ -13,6 +13,7 @@ Repository containing completed hands-on exercises for Cloud Native Microservice
 | **HON 3** | Employee Management Microservice | Spring Boot 3, Spring Data JPA, In-Memory H2 DB, Jakarta Validation | [HON3.md](./HON3.md) |
 | **HON 4** | Product Catalog Microservice | Node.js, Express, Mongoose (MongoDB ODM), Centralized Error Handling | [HON4.md](./HON4.md) |
 | **HON 5** | Containerization & Kubernetes Orchestration | Docker, Docker Compose, Kubernetes, Minikube, kubectl | [HON5.md](./HON5.md) |
+| **HON 6** | Microservices DevOps CI/CD & Monitoring | GitHub Actions, Spring Boot Actuator, Prometheus, Multi-stage Docker | [HON6.md](./HON6.md) |
 
 ---
 
@@ -20,11 +21,16 @@ Repository containing completed hands-on exercises for Cloud Native Microservice
 
 ```
 CNMSE-HONs/
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml                 # Master GitHub Actions CI/CD Pipeline Configuration
 ├── HON1.md                       # Monolithic e-commerce breakdown & microservices architecture
 ├── HON2.md                       # To-Do REST API documentation with Swagger UI details
 ├── HON3.md                       # Spring Boot Employee Management microservice documentation
 ├── HON4.md                       # Product Catalog microservice documentation with Postman proofs
 ├── HON5.md                       # Containerization (Docker) & Orchestration (Kubernetes/Minikube)
+├── HON6.md                       # DevOps CI/CD Pipeline Automation & Monitoring Deliverable
+├── ci-cd-run-screenshot.png      # Verified GitHub Actions successful CI/CD pipeline screenshot
 ├── kubectl-pods-screenshot.png   # Verified terminal screenshot of running pods in Minikube
 ├── docker-compose.yml            # Docker Compose orchestration file
 │
@@ -33,11 +39,12 @@ CNMSE-HONs/
 │   ├── service.yaml              # NodePort service manifest exposing port 30080
 │   └── kubectl-pods-screenshot.png # Verification screenshot
 │
-├── todo-api/                     # HON2 & HON5: Node.js Express REST API
+├── todo-api/                     # HON2 & HON5 & HON6: Node.js Express REST API
 │   ├── Dockerfile                # Production Alpine Dockerfile (non-root, layer cached)
 │   ├── .dockerignore             # Docker ignore configuration
-│   ├── server.js                 # Express server with Swagger JSDoc annotations
-│   ├── package.json              # Dependencies (express, swagger-ui-express, swagger-jsdoc)
+│   ├── server.js                 # Express server with Swagger, /health and /metrics endpoints
+│   ├── package.json              # Dependencies and test runner script
+│   ├── test-ci.js                # Automated CI test suite (CRUD, Health & Prometheus)
 │   ├── postman_collection.json   # Exported Postman collection for all CRUD endpoints
 │   ├── test-api.js               # End-to-end automated test runner
 │   ├── swagger-ui-screenshot.png # Live Swagger UI screenshot
@@ -45,8 +52,10 @@ CNMSE-HONs/
 │       ├── deployment.yaml
 │       └── service.yaml
 │
-├── employee-service/             # HON3: Spring Boot Microservice
-│   ├── pom.xml                   # Maven build file (Spring Web, JPA, H2, Validation)
+├── employee-service/             # HON3 & HON6: Spring Boot Microservice
+│   ├── pom.xml                   # Maven build file (Spring Web, JPA, H2, Actuator, Prometheus)
+│   ├── Dockerfile                # Multi-stage production containerfile (Eclipse Temurin 17)
+│   ├── .dockerignore             # Container ignore configuration
 │   └── src/
 │       ├── main/java/com/example/employeeservice/
 │       │   ├── EmployeeServiceApplication.java
@@ -55,9 +64,12 @@ CNMSE-HONs/
 │       │   ├── exception/GlobalExceptionHandler.java
 │       │   ├── repository/EmployeeRepository.java
 │       │   └── service/impl/EmployeeServiceImpl.java
-│       └── main/resources/
-│           ├── application.properties
-│           └── data.sql
+│       ├── main/resources/
+│       │   ├── application.properties # Exposes health, info, metrics, prometheus
+│       │   └── data.sql
+│       └── test/java/com/example/employeeservice/
+│           ├── EmployeeControllerTest.java
+│           └── ActuatorHealthTest.java # Actuator and Prometheus test suite
 │
 └── product-catalog-service/      # HON4: Product Catalog Microservice
     ├── server.js                 # Express server & route registration
@@ -119,3 +131,25 @@ kubectl get services
 # 4. Access the service
 minikube service todo-api-service
 ```
+
+### HON6: DevOps CI/CD Pipeline & Monitoring
+```bash
+# 1. Trigger GitHub Actions CI/CD Pipeline
+git push origin main
+# The workflow executes automatically at .github/workflows/ci-cd.yml
+
+# 2. Run local tests & verify Actuator metrics for Employee Service
+cd employee-service
+mvn test
+# Start service and inspect Actuator Health & Prometheus metrics:
+mvn spring-boot:run
+curl http://localhost:8081/actuator/health
+curl http://localhost:8081/actuator/prometheus
+
+# 3. Run automated CI test suite for To-Do API
+cd todo-api
+npm test
+curl http://localhost:3000/health
+curl http://localhost:3000/metrics
+```
+

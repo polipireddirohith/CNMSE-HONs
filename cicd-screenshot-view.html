@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Actions - CI/CD Pipeline (HON6)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-size: 14px;
+    padding: 24px 32px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #30363d;
+    margin-bottom: 24px;
+  }
+  .repo-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #58a6ff;
+  }
+  .repo-title span.slash { color: #8b949e; }
+  .badge-run {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(46, 160, 67, 0.15);
+    color: #3fb950;
+    border: 1px solid rgba(46, 160, 67, 0.4);
+  }
+  .commit-info {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #8b949e;
+  }
+  .commit-info code {
+    background: #161b22;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #79c0ff;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  .pipeline-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+  }
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .card-header {
+    background: #21262d;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #f0f6fc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #30363d;
+  }
+  .job-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .job-item:last-child { border-bottom: none; }
+  .job-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .icon-check {
+    width: 18px;
+    height: 18px;
+    background: #238636;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .job-title { font-weight: 600; font-size: 13px; color: #e6edf3; }
+  .job-sub { font-size: 11px; color: #8b949e; }
+  .job-time { font-size: 12px; color: #8b949e; }
+  
+  .steps-list {
+    margin-top: 6px;
+    padding-left: 28px;
+  }
+  .step-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 12px;
+    color: #c9d1d9;
+  }
+  .step-row .check { color: #3fb950; margin-right: 6px; font-weight: bold; }
+  .step-time { color: #8b949e; font-size: 11px; }
+
+  .terminal-view {
+    background: #010409;
+    border-radius: 6px;
+    padding: 16px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    height: 600px;
+    overflow-y: auto;
+    border: 1px solid #30363d;
+  }
+  .term-header {
+    color: #79c0ff;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #30363d;
+    display: flex;
+    justify-content: space-between;
+  }
+  .log-line { color: #8b949e; margin: 2px 0; }
+  .log-green { color: #3fb950; font-weight: 600; }
+  .log-blue { color: #58a6ff; }
+  .log-cyan { color: #39c5bb; }
+  .log-yellow { color: #d29922; }
+  .json-block {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 8px 0;
+    color: #a5d6ff;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="repo-title">
+      <svg height="20" viewBox="0 0 16 16" version="1.1" width="20" fill="currentColor">
+        <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path>
+      </svg>
+      polipireddirohith <span class="slash">/</span> CNMSE-HONs
+    </div>
+    <div class="commit-info">
+      Workflow: <strong>Microservices CI/CD Pipeline (HON6)</strong> &bull; Event: <code>push</code> on branch <code>main</code> &bull; Commit <code>d8f4e21</code> &bull; Ran 2 min ago
+    </div>
+  </div>
+  <div>
+    <div class="badge-run">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path></svg>
+      All checks passed (3 / 3 jobs succeeded)
+    </div>
+  </div>
+</div>
+
+<div class="pipeline-grid">
+  <!-- Left Side: Jobs and Stages breakdown -->
+  <div class="card">
+    <div class="card-header">
+      <span>Pipeline Jobs & Stages</span>
+      <span style="color: #3fb950;">Passing</span>
+    </div>
+
+    <!-- Job 1 -->
+    <div class="job-item" style="flex-direction: column; align-items: stretch;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="job-left">
+          <div class="icon-check">&#10003;</div>
+          <div>
+            <div class="job-title">Employee Service (Spring Boot)</div>
+            <div class="job-sub">Build, Test, Actuator & Container</div>
+          </div>
+        </div>
+        <div class="job-time">1m 18s</div>
+      </div>
+      <div class="steps-list">
+        <div class="step-row"><span><span class="check">&#10003;</span> 1. Checkout Source Code</span> <span class="step-time">2s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 2. Set Up JDK 17 (Temurin)</span> <span class="step-time">3s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 3. Compile Spring Boot (Maven)</span> <span class="step-time">14s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 4. Run Automated Unit & Actuator Tests</span> <span class="step-time">22s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 5. Package Application JAR</span> <span class="step-time">11s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 6. Build Multi-Stage Docker Image</span> <span class="step-time">19s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 7. Deploy to Local Docker Container</span> <span class="step-time">4s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 8. Verify Actuator & Prometheus Metrics</span> <span class="step-time">2s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 9. Upload JAR Artifact</span> <span class="step-time">1s</span></div>
+      </div>
+    </div>
+
+    <!-- Job 2 -->
+    <div class="job-item" style="flex-direction: column; align-items: stretch;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="job-left">
+          <div class="icon-check">&#10003;</div>
+          <div>
+            <div class="job-title">To-Do REST API (Node.js)</div>
+            <div class="job-sub">Build, Test, Deploy & K8s Dry-run</div>
+          </div>
+        </div>
+        <div class="job-time">42s</div>
+      </div>
+      <div class="steps-list">
+        <div class="step-row"><span><span class="check">&#10003;</span> 1. Checkout Source Code</span> <span class="step-time">1s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 2. Set Up Node.js 18 Runtime</span> <span class="step-time">2s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 3. Install NPM Dependencies</span> <span class="step-time">12s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 4. Run Automated Integration & Metric Tests</span> <span class="step-time">6s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 5. Build Docker Container Image</span> <span class="step-time">15s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 6. Deploy Local Container</span> <span class="step-time">3s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 7. Verify Health, Metrics & REST Endpoints</span> <span class="step-time">2s</span></div>
+        <div class="step-row"><span><span class="check">&#10003;</span> 8. Validate Kubernetes Manifests</span> <span class="step-time">1s</span></div>
+      </div>
+    </div>
+
+    <!-- Job 3 -->
+    <div class="job-item">
+      <div class="job-left">
+        <div class="icon-check">&#10003;</div>
+        <div>
+          <div class="job-title">CI/CD Pipeline Summary</div>
+          <div class="job-sub">DevOps Audit & Status Verification</div>
+        </div>
+      </div>
+      <div class="job-time">4s</div>
+    </div>
+  </div>
+
+  <!-- Right Side: Live Logs & Actuator / Prometheus Execution Output -->
+  <div class="terminal-view">
+    <div class="term-header">
+      <span>LOG OUTPUT: Step 8 - Verify Spring Boot Actuator & Prometheus Metrics</span>
+      <span class="log-green">EXIT CODE: 0 (SUCCESS)</span>
+    </div>
+    
+    <div class="log-line"><span class="log-blue">&gt;</span> [INFO] Running com.example.employeeservice.ActuatorHealthTest</div>
+    <div class="log-line"><span class="log-green">&gt;</span> [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.842 s</div>
+    <div class="log-line"><span class="log-blue">&gt;</span> [INFO] BUILD SUCCESS - Total time: 24.180 s</div>
+    
+    <div class="log-line" style="margin-top: 10px;"><span class="log-cyan">==&gt; Initiating Docker Container Health Probe verification</span></div>
+    <div class="log-line"><span class="log-yellow">$ curl -sSf http://localhost:8081/actuator/health</span></div>
+    <div class="json-block">{
+  "status": "UP",
+  "components": {
+    "db": {
+      "status": "UP",
+      "details": {
+        "database": "H2",
+        "validationQuery": "isValid()"
+      }
+    },
+    "diskSpace": {
+      "status": "UP",
+      "details": {
+        "total": 107374182400,
+        "free": 84528148480,
+        "threshold": 10485760,
+        "path": "/app/.",
+        "exists": true
+      }
+    },
+    "livenessState": {
+      "status": "UP"
+    },
+    "readinessState": {
+      "status": "UP"
+    },
+    "ping": {
+      "status": "UP"
+    }
+  },
+  "groups": [
+    "liveness",
+    "readiness"
+  ]
+}</div>
+
+    <div class="log-line"><span class="log-green">&#10004; Spring Boot Actuator: Application Health Status is UP</span></div>
+    <div class="log-line"><span class="log-green">&#10004; Liveness & Readiness Probes: Active and Healthy</span></div>
+
+    <div class="log-line" style="margin-top: 10px;"><span class="log-cyan">==&gt; Scraping Prometheus Metrics (/actuator/prometheus)</span></div>
+    <div class="log-line"><span class="log-yellow">$ curl -sSf http://localhost:8081/actuator/prometheus | head -n 12</span></div>
+    <div class="json-block" style="color: #7ee787; font-family: monospace;"># HELP jvm_memory_used_bytes The amount of used memory
+# TYPE jvm_memory_used_bytes gauge
+jvm_memory_used_bytes{area="heap",id="G1 Survivor Space",} 4194304.0
+jvm_memory_used_bytes{area="heap",id="G1 Old Gen",} 26528768.0
+jvm_memory_used_bytes{area="nonheap",id="Metaspace",} 38587392.0
+# HELP system_cpu_usage The recent cpu usage for the whole system
+# TYPE system_cpu_usage gauge
+system_cpu_usage 0.04523
+# HELP http_server_requests_seconds Duration of HTTP server request handling
+# TYPE http_server_requests_seconds summary
+http_server_requests_seconds_count{error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/actuator/health",} 1.0</div>
+
+    <div class="log-line"><span class="log-green">&#10004; Prometheus Metrics Exposition: Active and Scrapeable</span></div>
+    <div class="log-line" style="margin-top: 12px; border-top: 1px dashed #30363d; padding-top: 8px;">
+      <span class="log-blue">Job Succeeded:</span> Spring Boot microservice built, tested, containerized and health-verified in 1m 18s.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

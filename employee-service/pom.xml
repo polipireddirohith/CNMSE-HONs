@@ -47,6 +47,18 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Spring Boot Starter Actuator: Health, Info, Metrics & Observability -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Micrometer Prometheus Registry: Production Prometheus Scrape Endpoint -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Spring Boot Starter Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

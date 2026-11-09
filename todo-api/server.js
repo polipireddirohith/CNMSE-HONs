@@ -33,6 +33,22 @@ let tasks = [
   }
 ];
 
+// Metrics counters
+let totalRequests = 0;
+let requestErrors = 0;
+const startTime = Date.now();
+
+// Middleware to record request metrics
+app.use((req, res, next) => {
+  totalRequests++;
+  res.on('finish', () => {
+    if (res.statusCode >= 400) {
+      requestErrors++;
+    }
+  });
+  next();
+});
+
 // Next ID counter
 let nextId = 4;
 
@@ -379,6 +395,118 @@ app.delete('/tasks/:id', (req, res) => {
     message: `Task with ID ${id} successfully deleted.`,
     deletedTask
   });
+});
+
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     summary: Health Check Endpoint
+ *     description: Returns the health status, uptime, and system metadata of the microservice.
+ *     tags:
+ *       - Monitoring
+ *     responses:
+ *       200:
+ *         description: Service is healthy and operational.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: UP
+ *                 uptime:
+ *                   type: number
+ *                   example: 120.5
+ *                 service:
+ *                   type: string
+ *                   example: todo-api
+ *                 timestamp:
+ *                   type: string
+ *                   example: 2026-11-09T14:10:00.000Z
+ */
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'UP',
+    uptime: process.uptime(),
+    service: 'todo-api',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    components: {
+      memory: {
+        status: 'UP',
+        heapUsedBytes: process.memoryUsage().heapUsed,
+        heapTotalBytes: process.memoryUsage().heapTotal
+      },
+      storage: {
+        status: 'UP',
+        tasksCount: tasks.length
+      }
+    }
+  });
+});
+
+/**
+ * @openapi
+ * /metrics:
+ *   get:
+ *     summary: Prometheus & Runtime Metrics Endpoint
+ *     description: Exposes Prometheus-compatible and JSON runtime performance metrics.
+ *     tags:
+ *       - Monitoring
+ *     responses:
+ *       200:
+ *         description: Prometheus metric text or JSON telemetry.
+ */
+app.get('/metrics', (req, res) => {
+  const mem = process.memoryUsage();
+  const uptimeSec = process.uptime();
+
+  if (req.headers.accept && req.headers.accept.includes('application/json')) {
+    return res.status(200).json({
+      uptime_seconds: uptimeSec,
+      total_requests: totalRequests,
+      error_requests: requestErrors,
+      memory: {
+        heap_used_bytes: mem.heapUsed,
+        heap_total_bytes: mem.heapTotal,
+        rss_bytes: mem.rss
+      },
+      tasks_total: tasks.length
+    });
+  }
+
+  // Prometheus exposition text format
+  const prometheusBody = [
+    '# HELP process_uptime_seconds Process uptime in seconds',
+    '# TYPE process_uptime_seconds gauge',
+    `process_uptime_seconds ${uptimeSec.toFixed(2)}`,
+    '',
+    '# HELP http_requests_total Total number of HTTP requests processed',
+    '# TYPE http_requests_total counter',
+    `http_requests_total ${totalRequests}`,
+    '',
+    '# HELP http_requests_errors_total Total number of failed HTTP requests',
+    '# TYPE http_requests_errors_total counter',
+    `http_requests_errors_total ${requestErrors}`,
+    '',
+    '# HELP nodejs_memory_heap_used_bytes Process heap memory used in bytes',
+    '# TYPE nodejs_memory_heap_used_bytes gauge',
+    `nodejs_memory_heap_used_bytes ${mem.heapUsed}`,
+    '',
+    '# HELP nodejs_memory_heap_total_bytes Process heap memory total allocated in bytes',
+    '# TYPE nodejs_memory_heap_total_bytes gauge',
+    `nodejs_memory_heap_total_bytes ${mem.heapTotal}`,
+    '',
+    '# HELP todo_items_count Total number of to-do items currently in storage',
+    '# TYPE todo_items_count gauge',
+    `todo_items_count ${tasks.length}`,
+    ''
+  ].join('\n');
+
+  res.setHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+  res.status(200).send(prometheusBody);
 });
 
 // Root welcome route redirecting to Swagger UI
